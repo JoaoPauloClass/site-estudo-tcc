@@ -1,0 +1,606 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Medora · HUB de Estudos TCC</title>
+<style>
+  :root {
+    --blue:        #1d4ed8;
+    --blue-light:  #dbeafe;
+    --blue-mid:    #3b82f6;
+    --blue-dark:   #1e3a8a;
+    --green:       #16a34a;
+    --green-light: #dcfce7;
+    --red:         #dc2626;
+    --red-light:   #fee2e2;
+    --gray-50:     #f8fafc;
+    --gray-100:    #f1f5f9;
+    --gray-200:    #e2e8f0;
+    --gray-400:    #94a3b8;
+    --gray-600:    #475569;
+    --gray-800:    #1e293b;
+    --white:       #ffffff;
+    --radius:      10px;
+    --shadow:      0 1px 3px rgba(0,0,0,.08), 0 4px 16px rgba(0,0,0,.06);
+    --shadow-lg:   0 4px 6px rgba(0,0,0,.07), 0 10px 30px rgba(0,0,0,.1);
+    --font:        'Segoe UI', system-ui, -apple-system, sans-serif;
+    --mono:        'Cascadia Code', 'Fira Mono', 'Courier New', monospace;
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: var(--font); background: var(--gray-50); color: var(--gray-800); min-height: 100vh; line-height: 1.6; }
+
+  header { background: var(--white); border-bottom: 1px solid var(--gray-200); padding: 0 24px; position: sticky; top: 0; z-index: 100; box-shadow: 0 1px 4px rgba(0,0,0,.06); }
+  .header-inner { max-width: 1100px; margin: 0 auto; display: flex; align-items: center; gap: 14px; height: 62px; }
+  .logo-mark { width: 36px; height: 36px; background: var(--blue); border-radius: 8px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+  .logo-mark svg { width: 20px; height: 20px; }
+  .logo-text { display: flex; flex-direction: column; line-height: 1.15; }
+  .logo-text strong { font-size: 15px; font-weight: 700; color: var(--gray-800); letter-spacing: -.3px; }
+  .logo-text span   { font-size: 11px; color: var(--gray-400); font-weight: 500; letter-spacing: .3px; text-transform: uppercase; }
+  .header-stats { margin-left: auto; display: flex; gap: 10px; align-items: center; }
+  .stat-pill { background: var(--gray-100); border: 1px solid var(--gray-200); border-radius: 20px; padding: 4px 12px; font-size: 12px; font-weight: 600; color: var(--gray-600); display: flex; align-items: center; gap: 5px; }
+  .stat-pill .dot { width: 7px; height: 7px; border-radius: 50%; background: var(--blue); }
+  .stat-pill.correct .dot { background: var(--green); }
+  .stat-pill.wrong .dot   { background: var(--red); }
+
+  .page { max-width: 1100px; margin: 0 auto; padding: 28px 20px 60px; display: grid; grid-template-columns: 260px 1fr; gap: 24px; align-items: start; }
+
+  .sidebar { background: var(--white); border: 1px solid var(--gray-200); border-radius: var(--radius); box-shadow: var(--shadow); overflow: hidden; position: sticky; top: 82px; }
+  .sidebar-title { padding: 14px 18px; font-size: 11px; font-weight: 700; letter-spacing: .8px; text-transform: uppercase; color: var(--gray-400); background: var(--gray-50); border-bottom: 1px solid var(--gray-200); }
+  .filter-group { padding: 16px 18px; border-bottom: 1px solid var(--gray-200); }
+  .filter-label { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .6px; color: var(--gray-400); margin-bottom: 10px; display: block; }
+  .filter-chips { display: flex; flex-wrap: wrap; gap: 6px; }
+  .chip { padding: 5px 11px; border-radius: 20px; border: 1.5px solid var(--gray-200); background: var(--white); color: var(--gray-600); font-size: 12px; font-weight: 600; cursor: pointer; transition: all .15s; user-select: none; }
+  .chip:hover { border-color: var(--blue-mid); color: var(--blue); }
+  .chip.active { background: var(--blue); border-color: var(--blue); color: var(--white); }
+  .chip.cat-negocios.active    { background: #7c3aed; border-color: #7c3aed; }
+  .chip.cat-fluxo.active       { background: #0891b2; border-color: #0891b2; }
+  .chip.cat-seguranca.active   { background: #dc2626; border-color: #dc2626; }
+  .chip.cat-conformidade.active{ background: #16a34a; border-color: #16a34a; }
+  .reset-btn { width: 100%; margin-top: 4px; padding: 8px; background: none; border: none; color: var(--gray-400); font-size: 12px; cursor: pointer; text-align: center; border-radius: 6px; transition: all .15s; }
+  .reset-btn:hover { background: var(--gray-100); color: var(--gray-800); }
+  .queue-info { padding: 14px 18px; background: var(--blue-light); text-align: center; }
+  .queue-info strong { font-size: 26px; font-weight: 800; color: var(--blue); display: block; line-height: 1; }
+  .queue-info span   { font-size: 11px; color: var(--blue); font-weight: 600; text-transform: uppercase; letter-spacing: .5px; }
+
+  .quiz-area { display: flex; flex-direction: column; gap: 18px; }
+
+  .progress-bar-wrap { background: var(--white); border: 1px solid var(--gray-200); border-radius: var(--radius); padding: 14px 18px; box-shadow: var(--shadow); display: flex; align-items: center; gap: 14px; }
+  .progress-bar-track { flex: 1; height: 6px; background: var(--gray-200); border-radius: 10px; overflow: hidden; }
+  .progress-bar-fill { height: 100%; background: linear-gradient(90deg, var(--blue-mid), var(--blue)); border-radius: 10px; transition: width .4s ease; }
+  .progress-label { font-size: 12px; font-weight: 700; color: var(--gray-400); white-space: nowrap; }
+
+  .question-card { background: var(--white); border: 1px solid var(--gray-200); border-radius: var(--radius); box-shadow: var(--shadow); overflow: hidden; transition: box-shadow .2s; }
+  .question-card:hover { box-shadow: var(--shadow-lg); }
+  .question-meta { padding: 12px 20px; display: flex; align-items: center; gap: 8px; border-bottom: 1px solid var(--gray-200); background: var(--gray-50); flex-wrap: wrap; }
+  .badge { padding: 3px 9px; border-radius: 20px; font-size: 11px; font-weight: 700; letter-spacing: .3px; }
+  .cat-Negocios       { background: #ede9fe; color: #6d28d9; }
+  .cat-Fluxo          { background: #cffafe; color: #0e7490; }
+  .cat-Arquitetura    { background: var(--blue-light); color: var(--blue-dark); }
+  .cat-Seguranca      { background: var(--red-light); color: var(--red); }
+  .cat-Conformidade   { background: var(--green-light); color: var(--green); }
+  .cat-default        { background: var(--gray-200); color: var(--gray-600); }
+  .badge-modo-orientador { background: #fef3c7; color: #92400e; }
+  .badge-modo-prova      { background: #e0e7ff; color: #3730a3; }
+  .badge-spec { background: var(--gray-100); color: var(--gray-600); }
+  .question-num { margin-left: auto; font-size: 12px; color: var(--gray-400); font-weight: 600; }
+  .question-body { padding: 22px 24px; }
+  .question-text { font-size: 17px; font-weight: 600; line-height: 1.55; color: var(--gray-800); margin-bottom: 24px; }
+
+  .alternatives { display: flex; flex-direction: column; gap: 10px; }
+  .alt-btn { display: flex; align-items: flex-start; gap: 12px; padding: 13px 16px; border: 1.5px solid var(--gray-200); border-radius: 8px; background: var(--white); text-align: left; cursor: pointer; font-size: 14px; color: var(--gray-800); font-family: var(--font); line-height: 1.5; transition: all .15s; width: 100%; }
+  .alt-btn:hover:not(:disabled) { border-color: var(--blue-mid); background: var(--blue-light); color: var(--blue-dark); }
+  .alt-letter { width: 26px; height: 26px; min-width: 26px; border-radius: 6px; background: var(--gray-100); color: var(--gray-600); font-size: 12px; font-weight: 800; display: flex; align-items: center; justify-content: center; transition: all .15s; margin-top: 1px; }
+  .alt-btn:hover:not(:disabled) .alt-letter { background: var(--blue); color: var(--white); }
+  .alt-btn.correct { border-color: var(--green); background: var(--green-light); color: #14532d; cursor: default; }
+  .alt-btn.correct .alt-letter { background: var(--green); color: white; }
+  .alt-btn.wrong   { border-color: var(--red); background: var(--red-light); color: #7f1d1d; cursor: default; }
+  .alt-btn.wrong .alt-letter   { background: var(--red); color: white; }
+  .alt-btn.dimmed  { opacity: .45; cursor: default; }
+  .alt-btn:disabled { cursor: default; }
+
+  .justificativa { margin: 18px 24px 22px; border-radius: 8px; border: 1px solid var(--gray-200); overflow: hidden; display: none; animation: fadeSlide .25s ease; }
+  .justificativa.visible { display: block; }
+  @keyframes fadeSlide { from { opacity: 0; transform: translateY(-6px); } to { opacity: 1; transform: translateY(0); } }
+  .just-header { padding: 10px 16px; display: flex; align-items: center; gap: 8px; font-size: 12px; font-weight: 700; letter-spacing: .3px; text-transform: uppercase; }
+  .just-header.correct-h { background: var(--green-light); color: var(--green); }
+  .just-header.wrong-h   { background: var(--red-light); color: var(--red); }
+  .just-body { padding: 14px 16px; font-size: 14px; line-height: 1.65; color: var(--gray-600); background: var(--white); border-top: 1px solid var(--gray-200); }
+
+  .actions { padding: 16px 24px 20px; display: flex; gap: 10px; align-items: center; border-top: 1px solid var(--gray-200); }
+  .btn { padding: 10px 22px; border-radius: 8px; font-size: 14px; font-weight: 700; border: none; cursor: pointer; transition: all .15s; display: flex; align-items: center; gap: 7px; font-family: var(--font); }
+  .btn-primary { background: var(--blue); color: white; }
+  .btn-primary:hover { background: var(--blue-dark); transform: translateY(-1px); box-shadow: 0 4px 12px rgba(29,78,216,.35); }
+  .btn-ghost { background: var(--gray-100); color: var(--gray-600); }
+  .btn-ghost:hover { background: var(--gray-200); }
+  .btn:disabled { opacity: .4; cursor: not-allowed; transform: none !important; box-shadow: none !important; }
+  .skip-info { margin-left: auto; font-size: 12px; color: var(--gray-400); }
+
+  .empty-state { background: var(--white); border: 1px solid var(--gray-200); border-radius: var(--radius); padding: 52px 24px; text-align: center; box-shadow: var(--shadow); }
+  .empty-icon { font-size: 48px; margin-bottom: 14px; }
+  .empty-state h3 { font-size: 16px; font-weight: 700; color: var(--gray-800); margin-bottom: 6px; }
+  .empty-state p  { font-size: 14px; color: var(--gray-400); }
+
+  .add-prompt { background: var(--white); border: 1px solid var(--gray-200); border-radius: var(--radius); box-shadow: var(--shadow); overflow: hidden; }
+  .add-prompt summary { padding: 14px 20px; font-size: 13px; font-weight: 700; color: var(--blue); cursor: pointer; display: flex; align-items: center; gap: 8px; list-style: none; background: var(--blue-light); border-bottom: 1px solid transparent; transition: background .15s; }
+  .add-prompt[open] summary { border-bottom-color: var(--gray-200); }
+  .add-prompt summary:hover { background: #bfdbfe; }
+  .add-prompt summary::-webkit-details-marker { display: none; }
+  .add-prompt summary::after { content: '▸'; margin-left: auto; transition: transform .2s; font-size: 11px; color: var(--blue); }
+  .add-prompt[open] summary::after { transform: rotate(90deg); }
+  .add-prompt-body { padding: 20px; }
+  .add-prompt-body p { font-size: 13px; color: var(--gray-600); margin-bottom: 14px; line-height: 1.65; }
+  .add-prompt-body pre { background: #0f172a; color: #e2e8f0; padding: 16px; border-radius: 8px; font-size: 12px; font-family: var(--mono); overflow-x: auto; line-height: 1.7; white-space: pre-wrap; word-break: break-word; }
+  .copy-btn { margin-top: 10px; padding: 8px 16px; background: var(--gray-100); border: 1px solid var(--gray-200); border-radius: 6px; font-size: 12px; font-weight: 700; color: var(--gray-600); cursor: pointer; transition: all .15s; }
+  .copy-btn:hover { background: var(--gray-200); }
+  .copy-btn.copied { background: var(--green-light); color: var(--green); border-color: var(--green); }
+
+  .scoreboard { background: var(--white); border: 1px solid var(--gray-200); border-radius: var(--radius); box-shadow: var(--shadow); padding: 18px; display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; }
+  .score-box { border-radius: 8px; padding: 12px; text-align: center; }
+  .score-box strong { display: block; font-size: 26px; font-weight: 800; line-height: 1; }
+  .score-box span   { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: .4px; }
+  .score-box.total  { background: var(--gray-100); color: var(--gray-600); }
+  .score-box.right  { background: var(--green-light); color: var(--green); }
+  .score-box.miss   { background: var(--red-light); color: var(--red); }
+
+  @media (max-width: 768px) {
+    .page { grid-template-columns: 1fr; padding: 16px 12px 52px; gap: 14px; }
+    .sidebar { position: static; }
+    .question-text { font-size: 15px; }
+    .header-stats .stat-pill:not(:first-child) { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-inner">
+    <div class="logo-mark">
+      <svg viewBox="0 0 24 24" fill="white" xmlns="http://www.w3.org/2000/svg">
+        <path d="M12 3C7 3 3 7 3 12s4 9 9 9 9-4 9-9-4-9-9-9zm-1 13H9V8h2v8zm4 0h-2V8h2v8z"/>
+      </svg>
+    </div>
+    <div class="logo-text">
+      <strong>Medora · HUB de Estudos</strong>
+      <span>Preparação para Defesa do TCC</span>
+    </div>
+    <div class="header-stats">
+      <div class="stat-pill"><span class="dot"></span><span id="stat-total-n">0</span>&nbsp;respondidas</div>
+      <div class="stat-pill correct"><span class="dot"></span><span id="stat-correct-n">0</span>&nbsp;certas</div>
+      <div class="stat-pill wrong"><span class="dot"></span><span id="stat-wrong-n">0</span>&nbsp;erradas</div>
+    </div>
+  </div>
+</header>
+
+<div class="page">
+  <aside class="sidebar">
+    <div class="sidebar-title">🎛 Filtros</div>
+    <div class="filter-group">
+      <span class="filter-label">Categoria</span>
+      <div class="filter-chips">
+        <button class="chip active" data-group="categoria" data-value="Todos">Todas</button>
+        <button class="chip cat-negocios" data-group="categoria" data-value="Negócios">Negócios</button>
+        <button class="chip cat-fluxo" data-group="categoria" data-value="Fluxo">Fluxo</button>
+        <button class="chip" data-group="categoria" data-value="Arquitetura">Arquitetura</button>
+        <button class="chip cat-seguranca" data-group="categoria" data-value="Segurança">Segurança</button>
+        <button class="chip cat-conformidade" data-group="categoria" data-value="Conformidade com leis">Conformidade</button>
+      </div>
+    </div>
+    <div class="filter-group">
+      <span class="filter-label">Especificidade</span>
+      <div class="filter-chips">
+        <button class="chip active" data-group="especificidade" data-value="Todos">Todas</button>
+        <button class="chip" data-group="especificidade" data-value="Baixa">Baixa</button>
+        <button class="chip" data-group="especificidade" data-value="Média">Média</button>
+        <button class="chip" data-group="especificidade" data-value="Alta">Alta</button>
+      </div>
+    </div>
+    <div class="filter-group">
+      <span class="filter-label">Modo</span>
+      <div class="filter-chips">
+        <button class="chip active" data-group="modo" data-value="Todos">Todos</button>
+        <button class="chip" data-group="modo" data-value="Orientador">🎓 Orientador</button>
+        <button class="chip" data-group="modo" data-value="Prova">📝 Prova</button>
+      </div>
+    </div>
+    <button class="reset-btn" id="reset-btn">↺ Limpar filtros</button>
+    <div class="queue-info">
+      <strong id="queue-count">0</strong>
+      <span>perguntas na fila</span>
+    </div>
+  </aside>
+
+  <main class="quiz-area">
+    <div class="scoreboard">
+      <div class="score-box total"><strong id="sc-total">0</strong><span>Respondidas</span></div>
+      <div class="score-box right"><strong id="sc-right">0</strong><span>Corretas ✓</span></div>
+      <div class="score-box miss"><strong id="sc-miss">0</strong><span>Erradas ✗</span></div>
+    </div>
+    <div class="progress-bar-wrap">
+      <div class="progress-bar-track"><div class="progress-bar-fill" id="progress-fill" style="width:0%"></div></div>
+      <div class="progress-label" id="progress-label">0 / 0</div>
+    </div>
+    <div id="quiz-root"></div>
+    <details class="add-prompt">
+      <summary>📋 Como adicionar mais perguntas ao quiz?</summary>
+      <div class="add-prompt-body">
+        <p>Use o prompt abaixo junto com qualquer trecho do TCC para gerar novas perguntas via IA (Claude, ChatGPT, Gemini). Cole o JSON retornado dentro do array <code>perguntas</code> no script deste arquivo HTML.</p>
+        <pre id="prompt-template">Atue como um membro rigoroso de uma banca avaliadora de TCC de Engenharia de Software. Vou te fornecer um trecho do meu documento de TCC sobre a plataforma "Medora". Quero que você leia e gere [INSERIR QUANTIDADE] perguntas desafiadoras focadas em testar o conhecimento da equipe sobre este trecho.
+
+Regras de Geração:
+• Seja fiel ao texto: a resposta correta DEVE estar baseada exclusivamente no trecho fornecido.
+• Alterne o modo entre "Orientador" (ex: "Como vocês garantem que a credencial do médico não seja fraudada pós-cadastro?") e "Prova" (ex: "Qual é o tempo máximo de sessão definido no RNF02?").
+• Alterne a especificidade (Baixa, Média, Alta) de acordo com a profundidade da questão.
+• A categoria deve ser rigorosamente uma destas: Negócios, Fluxo, Arquitetura, Segurança, Conformidade com leis.
+
+Saída: Me devolva APENAS um array JSON válido contendo os objetos gerados, sem formatação markdown em volta, usando EXATAMENTE esta estrutura:
+
+[
+  {
+    "id": 1,
+    "pergunta": "...",
+    "alternativas": ["...", "...", "...", "..."],
+    "respostaCorreta": 0,
+    "categoria": "Segurança",
+    "especificidade": "Alta",
+    "modo": "Orientador",
+    "justificativa": "..."
+  }
+]
+
+Trecho do documento para basear as perguntas: [COLE O TRECHO DO TCC AQUI]</pre>
+        <button class="copy-btn" id="copy-btn">📋 Copiar prompt</button>
+      </div>
+    </details>
+  </main>
+</div>
+
+<script>
+const perguntas = [
+  {
+    "id": 1,
+    "pergunta": "Qual é o principal diferencial do Medora em relação a outras plataformas de telemedicina já existentes no mercado?",
+    "alternativas": [
+      "Oferecer consultas presenciais e teleconsultas com preços mais baixos do mercado.",
+      "Centralizar o prontuário eletrônico e realizar verificação contínua de credenciais profissionais (CRM e RQE).",
+      "Utilizar inteligência artificial para diagnósticos automáticos de doenças.",
+      "Integrar diretamente com planos de saúde para reembolso automático."
+    ],
+    "respostaCorreta": 1,
+    "categoria": "Negócios",
+    "especificidade": "Baixa",
+    "modo": "Orientador",
+    "justificativa": "Conforme o resumo do TCC, os diferenciais do Medora são especificamente a verificação contínua de credenciais e a centralização do prontuário eletrônico, não o preço nem o uso de IA diagnóstica ou integração com planos."
+  },
+  {
+    "id": 2,
+    "pergunta": "Por que uma verificação de CRM realizada apenas uma vez, no momento do cadastro do médico, não é suficiente para garantir a segurança do paciente?",
+    "alternativas": [
+      "Porque o sistema pode apresentar falhas técnicas durante o processo de cadastro.",
+      "Porque a regularidade de um registro médico pode mudar ao longo do tempo — suspensões, cancelamentos ou perda de habilitação podem ocorrer após o cadastro, sem que o paciente saiba.",
+      "Porque os portais dos conselhos de medicina ficam fora do ar com frequência, impedindo a consulta inicial.",
+      "Porque o paciente precisa renovar seu cadastro a cada 6 meses para manter o histórico atualizado."
+    ],
+    "respostaCorreta": 1,
+    "categoria": "Negócios",
+    "especificidade": "Média",
+    "modo": "Orientador",
+    "justificativa": "O TCC é explícito: 'a regularidade do registro de um profissional pode mudar após o cadastro' e 'suspensões disciplinares, cancelamento de CRM ou perda de habilitação em especialidade registrada no RQE podem ocorrer a qualquer momento'. Isso justifica a reverificação periódica automatizada."
+  },
+  {
+    "id": 3,
+    "pergunta": "Qual tecnologia foi escolhida para o backend do Medora e qual padrão arquitetural ele segue?",
+    "alternativas": [
+      "Node.js com Express, seguindo arquitetura MVC (Model-View-Controller).",
+      "Python com Django, seguindo arquitetura hexagonal.",
+      ".NET 10 com C#, seguindo o padrão Onion Architecture.",
+      "Java com Spring Boot, seguindo arquitetura de microsserviços."
+    ],
+    "respostaCorreta": 2,
+    "categoria": "Arquitetura",
+    "especificidade": "Média",
+    "modo": "Prova",
+    "justificativa": "A seção 2.1.4 especifica: 'O backend será desenvolvido utilizando a plataforma .NET 10 e a linguagem C#' e 'O backend seguirá o padrão Onion Architecture, que isola a lógica de domínio dos detalhes de infraestrutura'."
+  },
+  {
+    "id": 4,
+    "pergunta": "Qual serviço externo é utilizado no Medora para verificar a regularidade dos CRMs dos médicos, e por que essa função foi delegada a um provedor especializado?",
+    "alternativas": [
+      "ViaCEP, porque fornece dados geográficos dos consultórios médicos em tempo real.",
+      "Documenso, porque já realiza a assinatura digital e pode verificar credenciais simultaneamente.",
+      "InfoSimples, para evitar a manutenção interna de mecanismos de extração dos portais dos conselhos, sujeitos a mudanças estruturais frequentes.",
+      "ICP-Brasil, porque é a única entidade autorizada pelo CFM a validar registros médicos."
+    ],
+    "respostaCorreta": 2,
+    "categoria": "Arquitetura",
+    "especificidade": "Alta",
+    "modo": "Orientador",
+    "justificativa": "Conforme a seção 2.1.5, a verificação é feita via API da InfoSimples. A justificativa do documento é que 'A delegação dessa consulta a um provedor especializado evita a manutenção, no Medora, de mecanismos próprios de extração de dados dos portais dos conselhos, sujeitos a alterações estruturais frequentes'."
+  },
+  {
+    "id": 5,
+    "pergunta": "De acordo com o RNF02, quais são as regras de segurança definidas para armazenamento de senhas e gestão de sessões no Medora?",
+    "alternativas": [
+      "Senhas armazenadas em MD5 e sessões expiram após 24 horas de inatividade.",
+      "Senhas com hash bcrypt/Argon2id (mínimo 12 rounds), sessões expiram em 30 minutos de inatividade e acesso bloqueado após 5 tentativas em 15 minutos.",
+      "Senhas em SHA-256 e sessões expiram após 60 minutos, sem limite de tentativas de login.",
+      "Senhas em Argon2id e sessões nunca expiram automaticamente, dependendo de logout manual."
+    ],
+    "respostaCorreta": 1,
+    "categoria": "Segurança",
+    "especificidade": "Alta",
+    "modo": "Prova",
+    "justificativa": "O Quadro 5 (RNF02) define: 'As senhas devem ser armazenadas com função de hash adaptativa (bcrypt, Argon2id ou equivalente, com custo mínimo de 12 rounds); as sessões autenticadas expiram após 30 minutos de inatividade e o acesso é bloqueado após 5 tentativas malsucedidas em 15 minutos'."
+  },
+  {
+    "id": 6,
+    "pergunta": "Qual é o intervalo máximo definido no RNF03 para reverificação automática das credenciais dos médicos ativos, e o que acontece quando uma irregularidade é detectada?",
+    "alternativas": [
+      "A cada 7 dias; o médico recebe um e-mail de aviso e tem 48h para regularizar a situação.",
+      "A cada 90 dias; a consulta em andamento é interrompida imediatamente.",
+      "A cada 30 dias; o registro do CRM é desativado automaticamente e o administrador é notificado.",
+      "A cada 24 horas; o médico fica suspenso por 15 dias até revisão manual pela equipe."
+    ],
+    "respostaCorreta": 2,
+    "categoria": "Segurança",
+    "especificidade": "Alta",
+    "modo": "Prova",
+    "justificativa": "O RNF03 (Quadro 5) estabelece: 'O sistema deve reverificar automaticamente o status de CRM e RQE dos médicos ativos em intervalo máximo de 30 dias, desativando o registro e notificando o administrador em caso de irregularidade'. A seção 2.2.3.2 confirma que o CRM é desativado automaticamente, retirando o profissional das listagens visíveis aos pacientes."
+  },
+  {
+    "id": 7,
+    "pergunta": "Qual é o prazo máximo que o médico tem para confirmar a disponibilidade de uma consulta presencial após o agendamento, e o que ocorre se esse prazo for ultrapassado?",
+    "alternativas": [
+      "24 horas corridas; a consulta é colocada em modo de espera indefinida até o médico responder.",
+      "6 horas úteis; a consulta transita automaticamente para o estado 'Cancelada'.",
+      "48 horas úteis; o paciente recebe reembolso integral e automático.",
+      "2 horas corridas; a consulta é redirecionada para outro médico disponível na plataforma."
+    ],
+    "respostaCorreta": 1,
+    "categoria": "Fluxo",
+    "especificidade": "Média",
+    "modo": "Prova",
+    "justificativa": "A seção 2.2.3.1 define: 'o médico dispõe de até seis horas úteis para confirmar a disponibilidade — prazo definido em projeto para equilibrar a expectativa de resposta do paciente e a rotina assistencial do profissional —, sob pena de a consulta transitar automaticamente para o estado Cancelada'."
+  },
+  {
+    "id": 8,
+    "pergunta": "No fluxo de teleconsulta, qual padrão de prontuário o médico preenche e como a integridade desse documento é garantida após a finalização?",
+    "alternativas": [
+      "Prontuário em formato livre (texto corrido); integridade garantida por backup diário automatizado.",
+      "Prontuário no formato SOAP; após finalização, é enviado ao Documenso para assinatura digital ICP-Brasil, armazenado com hash SHA-256 e marcado como 'IsFinalized', tornando-o imutável.",
+      "Prontuário em formato CDA-HL7; integridade garantida por criptografia AES-256 no banco de dados.",
+      "Prontuário em formato JSON estruturado; integridade garantida por timestamp do servidor no envio."
+    ],
+    "respostaCorreta": 1,
+    "categoria": "Fluxo",
+    "especificidade": "Alta",
+    "modo": "Orientador",
+    "justificativa": "A seção 2.2.3.3 descreve: 'o médico preenche o prontuário [SOAP - Subjective, Objective, Assessment, Plan]... a API encaminha o documento ao Documenso para assinatura digital em conformidade com a ICP-Brasil, recebe o PDF assinado acompanhado do hash SHA-256 e persiste o registro com a marca IsFinalized, tornando-o imutável a partir desse instante'."
+  },
+  {
+    "id": 9,
+    "pergunta": "Como o Medora atende às exigências da LGPD no que se refere ao atendimento de solicitações dos titulares de dados e à comunicação de incidentes?",
+    "alternativas": [
+      "Atende solicitações em até 30 dias e comunica incidentes à ANPD em até 7 dias úteis.",
+      "Atende solicitações de acesso, correção e eliminação em até 15 dias e comunica incidentes à ANPD em até 72 horas.",
+      "Atende solicitações em até 5 dias úteis e comunica incidentes ao CFM em até 24 horas.",
+      "Atende solicitações em até 48 horas e comunica incidentes ao próprio paciente afetado em até 72 horas."
+    ],
+    "respostaCorreta": 1,
+    "categoria": "Conformidade com leis",
+    "especificidade": "Alta",
+    "modo": "Prova",
+    "justificativa": "O RNF01 (Quadro 5) especifica: 'atendimento a solicitações de acesso, correção e eliminação em até 15 dias e comunicação de incidentes à Autoridade Nacional de Proteção de Dados (ANPD) em até 72 horas', em conformidade com a Lei nº 13.709/2018 (LGPD)."
+  },
+  {
+    "id": 10,
+    "pergunta": "Qual manual normativo foi utilizado como referência para avaliar a conformidade do Medora com as práticas de sistemas de registro eletrônico em saúde, e quais conjuntos de requisitos ele organiza?",
+    "alternativas": [
+      "Manual ISO 27001; organizado em controles de segurança da informação e continuidade de negócios.",
+      "Manual OWASP ASVS; organizado em níveis L1, L2 e L3 de verificação de segurança de aplicações.",
+      "Manual de Certificação S-RES da SBIS (v5.2); organizado em requisitos ECF (funcionalidade clínica), NGS1 e NGS2 (segurança).",
+      "Resolução CFM nº 2.314/2022; organizada em modalidades de teleconsulta e regulamentação de atendimento digital."
+    ],
+    "respostaCorreta": 2,
+    "categoria": "Conformidade com leis",
+    "especificidade": "Média",
+    "modo": "Orientador",
+    "justificativa": "A seção 3.1 explica que foi adotado o 'Manual de Certificação de Sistemas de Registro Eletrônico em Saúde (S-RES), em sua versão 5.2' da SBIS, que 'consolida, em um único instrumento, as exigências... nas dimensões de funcionalidade clínica — requisitos ECF — e de segurança, organizados nos conjuntos NGS1 e NGS2'."
+  },
+  {
+    "id": 11,
+    "pergunta": "No modelo de dados do Medora, por que a entidade Doctor pode ter múltiplos registros na entidade CRM?",
+    "alternativas": [
+      "Porque cada especialidade médica exige um CRM diferente emitido diretamente pelo CFM federal.",
+      "Porque um médico pode ter inscrições em mais de um conselho regional de medicina (estados diferentes).",
+      "Porque o sistema armazena o histórico de todos os CRMs anteriores, mesmo os já cancelados.",
+      "Porque cada teleconsulta gera um novo número de CRM temporário para fins de rastreabilidade."
+    ],
+    "respostaCorreta": 1,
+    "categoria": "Arquitetura",
+    "especificidade": "Alta",
+    "modo": "Prova",
+    "justificativa": "A seção 2.2.5 explica: 'Cada médico pode possuir mais de um registro de CRM, refletindo inscrições em diferentes conselhos regionais'. Ou seja, um médico registrado em São Paulo e no Paraná teria dois CRMs distintos armazenados."
+  },
+  {
+    "id": 12,
+    "pergunta": "De que forma a escolha pelo Documenso para assinatura digital dos documentos clínicos se alinha aos requisitos normativos do Medora?",
+    "alternativas": [
+      "O Documenso é uma plataforma proprietária homologada exclusivamente pelo CFM para uso em telemedicina.",
+      "O Documenso, configurado com certificado ICP-Brasil, produz assinaturas com validade jurídica no Brasil, atendendo ao conjunto NGS2 do Manual S-RES, que exige assinatura qualificada para documentos clínicos.",
+      "O Documenso substitui o ICP-Brasil ao criar um certificado próprio com validade internacional reconhecida.",
+      "O Documenso foi escolhido exclusivamente por ser gratuito, sem relação direta com requisitos de conformidade normativa."
+    ],
+    "respostaCorreta": 1,
+    "categoria": "Conformidade com leis",
+    "especificidade": "Alta",
+    "modo": "Orientador",
+    "justificativa": "As seções 2.1.6, 2.2.3.3 e 3.5 são claras: o Documenso é de código aberto, configurado com certificado ICP-Brasil para validade jurídica, e sua adoção é justificada pela aderência ao conjunto NGS2 do Manual S-RES, que exige assinatura qualificada para prontuários e receitas digitais."
+  }
+];
+
+const state = {
+  filtros: { categoria: 'Todos', especificidade: 'Todos', modo: 'Todos' },
+  fila: [], indice: 0,
+  respondidas: 0, certas: 0, erradas: 0,
+  respondida: false
+};
+
+const letras = ['A', 'B', 'C', 'D'];
+
+function filtrar() {
+  return perguntas.filter(q => {
+    const okCat = state.filtros.categoria === 'Todos' || q.categoria === state.filtros.categoria;
+    const okEsp = state.filtros.especificidade === 'Todos' || q.especificidade === state.filtros.especificidade;
+    const okMod = state.filtros.modo === 'Todos' || q.modo === state.filtros.modo;
+    return okCat && okEsp && okMod;
+  });
+}
+
+function embaralhar(arr) {
+  const a = [...arr];
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
+function reconstruirFila() {
+  state.fila = embaralhar(filtrar());
+  state.indice = 0;
+  state.respondida = false;
+  document.getElementById('queue-count').textContent = state.fila.length;
+  renderQuestion();
+}
+
+function catClass(cat) {
+  const map = { 'Negócios': 'cat-Negocios', 'Fluxo': 'cat-Fluxo', 'Arquitetura': 'cat-Arquitetura', 'Segurança': 'cat-Seguranca', 'Conformidade com leis': 'cat-Conformidade' };
+  return map[cat] || 'cat-default';
+}
+
+function renderQuestion() {
+  const root = document.getElementById('quiz-root');
+  if (state.fila.length === 0) {
+    root.innerHTML = '<div class="empty-state"><div class="empty-icon">🔍</div><h3>Nenhuma pergunta encontrada</h3><p>Ajuste os filtros ou adicione mais perguntas ao banco de dados.</p></div>';
+    document.getElementById('progress-fill').style.width = '0%';
+    document.getElementById('progress-label').textContent = '0 / 0';
+    return;
+  }
+  const q = state.fila[state.indice];
+  const total = state.fila.length;
+  const pos = state.indice + 1;
+  const pct = Math.round(((pos - 1) / total) * 100);
+  document.getElementById('progress-fill').style.width = pct + '%';
+  document.getElementById('progress-label').textContent = pos + ' / ' + total;
+  const modoClass = q.modo === 'Orientador' ? 'badge-modo-orientador' : 'badge-modo-prova';
+  const modoIcon  = q.modo === 'Orientador' ? '🎓' : '📝';
+  const altsHTML = q.alternativas.map((alt, i) =>
+    '<button class="alt-btn" data-idx="' + i + '" onclick="responder(' + i + ')">' +
+    '<span class="alt-letter">' + letras[i] + '</span><span>' + alt + '</span></button>'
+  ).join('');
+  root.innerHTML =
+    '<div class="question-card">' +
+      '<div class="question-meta">' +
+        '<span class="badge ' + catClass(q.categoria) + '">' + q.categoria + '</span>' +
+        '<span class="badge ' + modoClass + '">' + modoIcon + ' ' + q.modo + '</span>' +
+        '<span class="badge badge-spec">⚡ ' + q.especificidade + '</span>' +
+        '<span class="question-num">' + pos + ' / ' + total + '</span>' +
+      '</div>' +
+      '<div class="question-body">' +
+        '<p class="question-text">' + q.pergunta + '</p>' +
+        '<div class="alternatives" id="alts">' + altsHTML + '</div>' +
+      '</div>' +
+      '<div class="justificativa" id="just">' +
+        '<div class="just-header" id="just-header"></div>' +
+        '<div class="just-body" id="just-body"></div>' +
+      '</div>' +
+      '<div class="actions">' +
+        '<button class="btn btn-ghost" onclick="pular()" id="btn-pular">⏭ Pular</button>' +
+        '<button class="btn btn-primary" onclick="proxima()" id="btn-prox" disabled>Próxima →</button>' +
+        '<span class="skip-info">' + (total - pos) + ' restantes nesta sessão</span>' +
+      '</div>' +
+    '</div>';
+}
+
+function responder(idx) {
+  if (state.respondida) return;
+  state.respondida = true;
+  const q = state.fila[state.indice];
+  const correto = idx === q.respostaCorreta;
+  state.respondidas++; if (correto) state.certas++; else state.erradas++;
+  document.getElementById('sc-total').textContent = state.respondidas;
+  document.getElementById('sc-right').textContent = state.certas;
+  document.getElementById('sc-miss').textContent  = state.erradas;
+  document.getElementById('stat-total-n').textContent   = state.respondidas;
+  document.getElementById('stat-correct-n').textContent = state.certas;
+  document.getElementById('stat-wrong-n').textContent   = state.erradas;
+  document.querySelectorAll('.alt-btn').forEach((btn, i) => {
+    btn.disabled = true;
+    if (i === q.respostaCorreta) btn.classList.add('correct');
+    else if (i === idx && !correto) btn.classList.add('wrong');
+    else btn.classList.add('dimmed');
+  });
+  const just = document.getElementById('just');
+  const justHeader = document.getElementById('just-header');
+  const justBody   = document.getElementById('just-body');
+  just.classList.add('visible');
+  if (correto) {
+    justHeader.className = 'just-header correct-h';
+    justHeader.innerHTML = '✅ Correto!';
+  } else {
+    justHeader.className = 'just-header wrong-h';
+    justHeader.innerHTML = '❌ Incorreto — a resposta certa é <strong>' + letras[q.respostaCorreta] + '</strong>';
+  }
+  justBody.textContent = q.justificativa;
+  document.getElementById('btn-prox').disabled = false;
+  document.getElementById('btn-pular').disabled = true;
+}
+
+function proxima() {
+  state.indice++;
+  state.respondida = false;
+  if (state.indice >= state.fila.length) {
+    state.fila = embaralhar(filtrar());
+    state.indice = 0;
+  }
+  renderQuestion();
+}
+
+function pular() {
+  if (state.respondida) return;
+  state.indice++;
+  if (state.indice >= state.fila.length) state.indice = 0;
+  renderQuestion();
+}
+
+document.querySelectorAll('.chip').forEach(chip => {
+  chip.addEventListener('click', () => {
+    const group = chip.dataset.group;
+    document.querySelectorAll('.chip[data-group="' + group + '"]').forEach(c => c.classList.remove('active'));
+    chip.classList.add('active');
+    state.filtros[group] = chip.dataset.value;
+    reconstruirFila();
+  });
+});
+
+document.getElementById('reset-btn').addEventListener('click', () => {
+  state.filtros = { categoria: 'Todos', especificidade: 'Todos', modo: 'Todos' };
+  document.querySelectorAll('.chip').forEach(c => c.classList.toggle('active', c.dataset.value === 'Todos'));
+  reconstruirFila();
+});
+
+document.getElementById('copy-btn').addEventListener('click', () => {
+  const text = document.getElementById('prompt-template').textContent;
+  navigator.clipboard.writeText(text).then(() => {
+    const btn = document.getElementById('copy-btn');
+    btn.textContent = '✅ Copiado!';
+    btn.classList.add('copied');
+    setTimeout(() => { btn.textContent = '📋 Copiar prompt'; btn.classList.remove('copied'); }, 2000);
+  });
+});
+
+reconstruirFila();
+</script>
+</body>
+</html>
