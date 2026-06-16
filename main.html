@@ -436,6 +436,306 @@ const perguntas = [
     "especificidade": "Alta",
     "modo": "Orientador",
     "justificativa": "As seções 2.1.6, 2.2.3.3 e 3.5 são claras: o Documenso é de código aberto, configurado com certificado ICP-Brasil para validade jurídica, e sua adoção é justificada pela aderência ao conjunto NGS2 do Manual S-RES, que exige assinatura qualificada para prontuários e receitas digitais."
+  },
+  {
+    "id": 13,
+    "pergunta": "Como os resultados do Enamed 2025 fundamentam a necessidade da verificação contínua proposta pelo Medora no cenário brasileiro?",
+    "alternativas": [
+      "Indicam que o CFM passou a cobrar taxas adicionais para validação manual de registros, inviabilizando a operação de clínicas físicas.",
+      "Evidenciam que uma parcela significativa dos cursos de medicina possui desempenho insuficiente, aumentando os riscos atrelados à formação profissional e justificando o rigor contínuo com as credenciais.",
+      "Mostram que a telemedicina ultrapassou 30 milhões de consultas, tornando obrigatório o uso de plataformas SaaS para o atendimento primário.",
+      "Apontam que o número de fraudes de receitas digitais triplicou, exigindo o bloqueio temporário de novos registros médicos no país."
+    ],
+    "respostaCorreta": 1,
+    "categoria": "Negócios",
+    "especificidade": "Baixa",
+    "modo": "Orientador",
+    "justificativa": "O texto cita que o número de cursos de medicina quase quintuplicou e os resultados do Enamed 2025 reforçam que uma parcela significativa dos cursos avaliados apresenta desempenho insuficiente, impactando a formação profissional e elevando a importância da verificação transparente das credenciais."
+  },
+  {
+    "id": 14,
+    "pergunta": "Quais ferramentas e abordagens específicas foram utilizadas para elaborar a modelagem dos diagramas do sistema no Medora?",
+    "alternativas": [
+      "Figma para as telas e Lucidchart para a arquitetura, priorizando colaboração em tempo real.",
+      "Enterprise Architect para UML e Visio para fluxogramas estruturados.",
+      "PlantUML, utilizando a abordagem 'diagrams as code' para versionamento junto ao fonte, e DrawIO para o editor visual do diagrama de arquitetura C4.",
+      "DrawIO para todos os diagramas de sequência e LaTeX para renderização nativa de modelos relacionais."
+    ],
+    "respostaCorreta": 2,
+    "categoria": "Arquitetura",
+    "especificidade": "Média",
+    "modo": "Prova",
+    "justificativa": "A seção 2.1.8 afirma explicitamente que o modelo de dados e os diagramas de sequência foram produzidos no PlantUML (diagrams as code versionado no Git) e o diagrama de arquitetura C4 foi elaborado no DrawIO (editor visual)."
+  },
+  {
+    "id": 15,
+    "pergunta": "Durante a etapa de ingresso na teleconsulta, como a plataforma assegura tecnicamente o vínculo de autorização entre o usuário e a sala virtual específica de atendimento?",
+    "alternativas": [
+      "A Medora API valida a autorização e o estado da consulta no banco de dados, devolvendo um token de sessão WebRTC exclusivo para o estabelecimento da chamada.",
+      "O portal do médico gera um link público via InfoSimples, que é enviado por SMS ao paciente autenticado no app mobile.",
+      "O sistema confia na autenticação JWT do usuário, permitindo o ingresso irrestrito em qualquer consulta agendada para o dia vigente.",
+      "O Documenso valida a chave pública do paciente e emite um certificado ICP-Brasil que libera a câmera e o microfone do dispositivo móvel."
+    ],
+    "respostaCorreta": 0,
+    "categoria": "Fluxo",
+    "especificidade": "Alta",
+    "modo": "Orientador",
+    "justificativa": "A seção 2.2.3.3 detalha o fluxo de ingresso na teleconsulta indicando que a Medora API valida a autorização e o status da consulta, retornando um 'token de sessão de WebRTC' para que o paciente e o médico possam se conectar."
+  },
+  {
+    "id": 16,
+    "pergunta": "Qual foi o critério central da equipe ao aplicar o método MoSCoW sobre os requisitos normativos do Manual S-RES da SBIS?",
+    "alternativas": [
+      "Privilegiar os requisitos que garantissem a certificação imediata pelo Conselho Federal de Medicina na primeira sprint.",
+      "Incluir absolutamente todos os requisitos NGS2 como 'Must have' para garantir validade internacional ao projeto.",
+      "Delegar ao orientador do TCC a classificação de todos os 263 requisitos em uma planilha separada de backlog.",
+      "Privilegiar os requisitos com maior aderência aos objetivos do trabalho e àqueles cuja implementação já estava prevista nos fluxos centrais da plataforma."
+    ],
+    "respostaCorreta": 3,
+    "categoria": "Conformidade com leis",
+    "especificidade": "Baixa",
+    "modo": "Prova",
+    "justificativa": "Segundo a seção 3.3, 'O critério adotado privilegiou os requisitos com maior aderência aos objetivos do trabalho e àqueles cuja implementação já estava prevista nos fluxos centrais da plataforma, evitando a expansão do escopo'."
+  },
+  {
+    "id": 17,
+    "pergunta": "Considerando o RNF04, de que maneira a plataforma estrutura e assegura a rastreabilidade e retenção de registros das ações clínicas e operacionais?",
+    "alternativas": [
+      "Retém prontuários por 5 anos e logs de auditoria por 20 anos, utilizando timestamps no fuso horário local do paciente.",
+      "Mantém registros do prontuário por no mínimo 20 anos e os logs de auditoria (com ID, ação, IP e timestamp ISO 8601) por no mínimo 5 anos.",
+      "Exporta todos os logs diários para uma planilha enviada ao administrador e exclui registros da base de dados após 1 ano.",
+      "Armazena logs estruturados no padrão JSON e mantém registros clínicos retidos indefinidamente, sem prazo mínimo definido."
+    ],
+    "respostaCorreta": 1,
+    "categoria": "Segurança",
+    "especificidade": "Média",
+    "modo": "Orientador",
+    "justificativa": "O Quadro 5, RNF04, especifica diretamente que logs de auditoria (identificador, ação, timestamp em ISO 8601 e IP) devem ser mantidos por 5 anos, e os registros do prontuário por no mínimo 20 anos."
+  },
+  {
+    "id": 18,
+    "pergunta": "Qual é o principal benefício técnico de se utilizar o padrão Onion Architecture no desenvolvimento do backend (.NET 10) do Medora?",
+    "alternativas": [
+      "Garantir tempos de resposta menores por compilar o banco de dados diretamente na memória do servidor.",
+      "Isolar completamente a lógica de domínio dos detalhes de infraestrutura (como banco de dados e APIs externas), favorecendo manutenibilidade e testes independentes.",
+      "Permitir o compartilhamento de código direto entre a interface mobile React Native e o backend .NET, reduzindo retrabalho de componentes.",
+      "Acelerar o processo de validação de endereços substituindo chamadas assíncronas do ViaCEP por componentes locais síncronos."
+    ],
+    "respostaCorreta": 1,
+    "categoria": "Arquitetura",
+    "especificidade": "Alta",
+    "modo": "Prova",
+    "justificativa": "Conforme a seção 2.1.4, 'O backend seguirá o padrão Onion Architecture, que isola a lógica de domínio dos detalhes de infraestrutura — como acesso a banco de dados e serviços externos —, favorecendo a manutenibilidade e o teste independente dos módulos'."
+  },
+  {
+    "id": 19,
+    "pergunta": "Por que o estado 'Cancelada' é modelado como um desfecho unificado no ciclo de vida das consultas do Medora?",
+    "alternativas": [
+      "Porque o administrador aprova manualmente todos os cancelamentos no portal.",
+      "Porque consolida diferentes cenários de insucesso, incluindo falha no pagamento, recusa do médico, expiração do prazo de confirmação e cancelamento explícito pelas partes.",
+      "Porque é um pseudo-estado temporário que redireciona a consulta aguardando reagendamento pela recepção do consultório.",
+      "Porque apenas o sistema (worker de reverificação) tem autorização para emitir esse estado caso o CRM esteja inativo."
+    ],
+    "respostaCorreta": 1,
+    "categoria": "Fluxo",
+    "especificidade": "Baixa",
+    "modo": "Orientador",
+    "justificativa": "A seção 2.2.3.1 define que 'O estado Cancelada consolida diferentes desfechos de insucesso, incluindo falha no pagamento, recusa do médico, expiração do prazo de confirmação e cancelamento explícito por qualquer das partes antes do horário marcado'."
+  },
+  {
+    "id": 20,
+    "pergunta": "Quais são os limites quantitativos exatos definidos pelo RNF06 para o desempenho das operações interativas e de carregamento web da plataforma?",
+    "alternativas": [
+      "As operações interativas devem responder em até 2 segundos no percentil 95, e o tempo até interatividade web (TTI) deve ser inferior a 3 segundos em conexões 4G simuladas.",
+      "As operações devem responder em até 5 segundos sob carga de estresse, e o TTI deve ser de no máximo 1 segundo em redes 5G.",
+      "O sistema deve carregar APIs externas em menos de 300 milissegundos e gerar relatórios administrativos em até 10 segundos.",
+      "A consulta ao InfoSimples deve ocorrer em até 2 segundos, não havendo limitação estrita para o TTI do carregamento das páginas."
+    ],
+    "respostaCorreta": 0,
+    "categoria": "Arquitetura",
+    "especificidade": "Média",
+    "modo": "Prova",
+    "justificativa": "O Quadro 6 (RNF06) define explicitamente: 'As operações interativas comuns devem responder em até 2 segundos no percentil 95 sob carga nominal; o tempo até a interatividade (Time to Interactive) das aplicações web deve ser inferior a 3 segundos em conexões 4G simuladas'."
+  },
+  {
+    "id": 21,
+    "pergunta": "Dos 263 requisitos analisados do S-RES, o que justifica a expressiva concentração de itens priorizados como 'Must have' na categoria ECF, em contraposição à predominância de 'Should/Could have' nos itens NGS2?",
+    "alternativas": [
+      "Os itens NGS2 exigiam que a API do Medora fosse construída em Java, enquanto a ECF era compatível com o backend .NET escolhido.",
+      "A categoria ECF trata de protocolos de rede obsoletos que deveriam ser substituídos imediatamente, sendo prioridade técnica.",
+      "A concentração em ECF reflete a priorização de exigências centrais de funcionalidade clínica (como prontuário e identificação), enquanto o NGS2 reflete a adoção gradual e futura de recursos de assinatura qualificada com o Documenso.",
+      "A SBIS exige obrigatoriamente a certificação ECF para SaaS no Brasil, sendo o nível NGS2 aplicável unicamente ao SUS."
+    ],
+    "respostaCorreta": 2,
+    "categoria": "Conformidade com leis",
+    "especificidade": "Alta",
+    "modo": "Orientador",
+    "justificativa": "A seção 3.4 explica que 'A maior densidade de itens Must have no conjunto ECF... reflete a concentração das exigências centrais de funcionalidade clínica, ao passo que a presença significativa de requisitos NGS2 nas categorias Should have e Could have... está alinhada à adoção gradual de recursos de assinatura qualificada... condicionados à integração com o Documenso'."
+  },
+  {
+    "id": 22,
+    "pergunta": "Como a organização em containers descrita no modelo arquitetural C4 distribui as tecnologias de interface entre os diferentes perfis de usuários do Medora?",
+    "alternativas": [
+      "Utiliza um aplicativo React Native apenas para médicos e portais web Vue.js para pacientes e administradores.",
+      "Consolida todos os acessos em uma única Single Page Application (SPA) React que renderiza perfis de acordo com as credenciais do usuário.",
+      "Fornece um App Mobile desenvolvido em React Native exclusivamente para o paciente, e Portais Web desenvolvidos com React + Vite distintos para os médicos e administradores.",
+      "Disponibiliza apps mobile para os três atores (médico, paciente e administrador) construídos inteiramente na linguagem C# com Xamarin."
+    ],
+    "respostaCorreta": 2,
+    "categoria": "Arquitetura",
+    "especificidade": "Baixa",
+    "modo": "Prova",
+    "justificativa": "A Figura 1 e as seções 2.1.1, 2.1.2 e 2.2.1 mostram que existe um 'App Mobile Paciente' em React Native, e um 'Portal Médico' e 'Portal Administrativo' operando como containers React + Vite isolados."
+  },
+  {
+    "id": 23,
+    "pergunta": "De acordo com o modelo de dados apresentado (Figura 4), como o Medora mapeia a relação entre o médico e as suas especialidades cadastradas (RQEs)?",
+    "alternativas": [
+      "Adiciona uma string simples separada por vírgulas diretamente na entidade Doctor, sob o atributo 'SpecialtiesList'.",
+      "Usa uma tabela de chave-valor temporária dentro de Appointment, associada apenas à consulta corrente.",
+      "Utiliza a entidade associativa RqeDoctors para vincular registros de um ou mais médicos (Doctor) a uma ou mais especialidades contidas na entidade Specialty.",
+      "Relaciona a tabela CRM diretamente com a tabela Prescription para inferir a especialidade do médico pelo tipo de remédio prescrito."
+    ],
+    "respostaCorreta": 2,
+    "categoria": "Arquitetura",
+    "especificidade": "Média",
+    "modo": "Orientador",
+    "justificativa": "A seção 2.2.5 descreve: 'e suas especialidades são vinculadas por RqeDoctors às Specialty correspondentes'. A Figura 4 mostra o relacionamento muitos-para-muitos mediado por 'RqeDoctors' entre 'Doctor' e 'Specialty'."
+  },
+  {
+    "id": 24,
+    "pergunta": "No fluxo de reverificação periódica das credenciais (Figura 2), o que o worker realiza de imediato quando a API recebe do InfoSimples o status de uma 'inscrição regular' (sem irregularidades)?",
+    "alternativas": [
+      "Atualiza o token WebRTC do médico para o próximo período de 30 dias.",
+      "A API apenas registra a verificação sem alteração no banco de dados, confirmando o processamento para preservar o histórico de auditoria.",
+      "Envia um e-mail de congratulação automatizado ao médico confirmando a regularidade de sua inscrição no conselho.",
+      "Requisita imediatamente uma segunda validação manual junto ao conselho regional do administrador."
+    ],
+    "respostaCorreta": 1,
+    "categoria": "Fluxo",
+    "especificidade": "Alta",
+    "modo": "Prova",
+    "justificativa": "De acordo com o diagrama da Figura 2 e o texto explicativo, 'Em verificações que retornam inscrição regular, a API apenas registra a execução do ciclo, preservando o histórico de auditoria exigido pelos requisitos de rastreabilidade'."
+  },
+  {
+    "id": 25,
+    "pergunta": "A integração com o serviço ViaCEP simplifica os cadastros de médicos e pacientes. Qual é a principal justificativa arquitetural para adotar um provedor externo em vez de armazenar os endereços internamente?",
+    "alternativas": [
+      "Para garantir conformidade exclusiva com a LGPD através de criptografia de ponta a ponta dos metadados residenciais.",
+      "Para evitar o esforço de desenvolver e manter uma base interna de CEPs, bem como as complexas atualizações periódicas que ela exigiria da equipe.",
+      "Porque o CFM obriga que os sistemas de registro clínico confirmem coordenadas GPS de todos os consultórios cadastrados.",
+      "Para calcular fretes e taxas de entrega atrelados ao faturamento de insumos nos consultórios médicos da plataforma."
+    ],
+    "respostaCorreta": 1,
+    "categoria": "Arquitetura",
+    "especificidade": "Baixa",
+    "modo": "Orientador",
+    "justificativa": "A seção 2.1.7 explica que 'A delegação dessa consulta a um provedor externo evita a manutenção interna de uma base de CEPs e as atualizações periódicas que ela exigiria'."
+  },
+  {
+    "id": 26,
+    "pergunta": "Após a Medora API encaminhar um documento clínico ao Documenso para assinatura e receber o retorno no fluxo de emissão de receita (Figura 3), quais elementos são persistidos no banco de dados?",
+    "alternativas": [
+      "Apenas o número do CRM, a data da consulta e o status de pagamento.",
+      "O documento no formato texto simples, o IP do paciente e a chave pública do sistema WebRTC.",
+      "O caminho do PDF gerado, o hash criptográfico SHA-256 e o tipo de assinatura aplicada.",
+      "O hash da senha do médico, a geolocalização do consultório e a chave privada criptografada."
+    ],
+    "respostaCorreta": 2,
+    "categoria": "Fluxo",
+    "especificidade": "Média",
+    "modo": "Prova",
+    "justificativa": "Segundo a seção 2.2.3.3, ao emitir a receita, a API 'armazena o caminho do arquivo, o hash criptográfico e o tipo de assinatura aplicado, conforme prescrito pelo conjunto NGS2'."
+  },
+  {
+    "id": 27,
+    "pergunta": "Como o Medora orquestra a entrega da receita médica ao final do fluxo de teleconsulta de modo a assegurar que o paciente a receba com a devida comodidade?",
+    "alternativas": [
+      "Exigindo que o paciente acesse o site de um cartório digital vinculado ao ViaCEP para download do arquivo.",
+      "A API marca a consulta como Realizada e dispara simultaneamente uma notificação push no aplicativo do paciente e um e-mail com a receita em anexo.",
+      "A API envia a prescrição por SMS usando o Documenso e agenda uma impressão automática em rede credenciada.",
+      "O paciente precisa aprovar o prontuário preenchido pelo médico durante a sessão antes que a receita possa ser liberada."
+    ],
+    "respostaCorreta": 1,
+    "categoria": "Fluxo",
+    "especificidade": "Alta",
+    "modo": "Orientador",
+    "justificativa": "A seção 2.2.3.3 descreve o final do fluxo: 'No encerramento, a consulta é marcada como Realizada e duas notificações automáticas são disparadas: uma notificação push ao aplicativo do paciente e uma mensagem de e-mail com a receita assinada em anexo'."
+  },
+  {
+    "id": 28,
+    "pergunta": "Qual é a métrica mínima de disponibilidade acordada para a operação contínua do Medora, conforme exigido no RNF05?",
+    "alternativas": [
+      "100% sem janelas de manutenção permitidas devido à criticidade dos registros de saúde.",
+      "99,5% de disponibilidade mensal, com as manutenções programadas fora do horário comercial e avisadas com 48 horas de antecedência.",
+      "98% em horário diurno e 90% no período noturno com manutenção automatizada a cada final de semana.",
+      "99,999%, equivalente à especificação de servidores financeiros de nível 5."
+    ],
+    "respostaCorreta": 1,
+    "categoria": "Segurança",
+    "especificidade": "Baixa",
+    "modo": "Prova",
+    "justificativa": "No Quadro 6 (RNF05), está expresso: 'A plataforma deve apresentar disponibilidade mensal mínima de 99,5%, com janelas de manutenção programada fora do horário comercial e comunicadas com antecedência mínima de 48 horas'."
+  },
+  {
+    "id": 29,
+    "pergunta": "A adequação legal descrita no RNF01 impõe prazos rigorosos à operação da plataforma. Qual legislação baseia a exigência de que o sistema responda às solicitações de acesso e eliminação do titular em até 15 dias?",
+    "alternativas": [
+      "A Resolução 2.314/2022 do Conselho Federal de Medicina.",
+      "O Manual de Certificação S-RES 5.2 da Sociedade Brasileira de Informática em Saúde.",
+      "O Regulamento Geral sobre a Proteção de Dados (GDPR) da União Europeia.",
+      "A Lei Geral de Proteção de Dados (Lei nº 13.709/2018)."
+    ],
+    "respostaCorreta": 3,
+    "categoria": "Conformidade com leis",
+    "especificidade": "Média",
+    "modo": "Orientador",
+    "justificativa": "O RNF01 descreve o atendimento a solicitações em 15 dias e comunicação de incidentes em 72 horas em 'Conformidade com a LGPD (Lei nº 13.709/2018)' (Quadro 5)."
+  },
+  {
+    "id": 30,
+    "pergunta": "Durante a abertura da teleconsulta no portal do médico, o que é feito na recuperação de dados (Figura 3) para evitar a violação de privacidade e garantir a segregação de informações entre profissionais diferentes que atendam o mesmo paciente?",
+    "alternativas": [
+      "A API exige o reenvio de um token SMS de 6 dígitos que o paciente informa verbalmente ao profissional na chamada.",
+      "O médico insere manualmente os identificadores das consultas que deseja ver, limitando o acesso ao que foi copiado por e-mail.",
+      "O sistema carrega os dados da consulta e retorna exclusivamente os prontuários anteriores daquele paciente que foram gerados com o próprio médico da sessão.",
+      "O banco de dados bloqueia completamente o histórico e obriga o profissional a coletar anamnese desde o zero a cada nova sessão."
+    ],
+    "respostaCorreta": 2,
+    "categoria": "Segurança",
+    "especificidade": "Alta",
+    "modo": "Prova",
+    "justificativa": "A seção 2.2.3.3 destaca: 'O portal do médico recebe... os prontuários anteriores do próprio médico com aquele paciente, preservando a separação dos dados entre profissionais'."
+  },
+  {
+    "id": 31,
+    "pergunta": "O que justifica a criação de uma solução SaaS focada especificamente em expor e atualizar a validade dos registros médicos, considerando as atuais vulnerabilidades do ambiente de telemedicina discutidas no TCC?",
+    "alternativas": [
+      "A necessidade primária de unificar prontuários de hospitais públicos e clínicas particulares em um banco de dados governamental único.",
+      "O aumento de clínicas de estética oferecendo exames sem comprovação, necessitando integrar a vigilância sanitária.",
+      "O fato de que, em ambientes digitais, fraudes e a assimetria de informações (registros que podem ser suspensos ou cancelados sem que o paciente saiba) expõem pacientes a riscos significativos de segurança e desperdícios no setor.",
+      "A falta de ferramentas que aceitem pagamento via PIX para o agendamento de teleconsultas noturnas."
+    ],
+    "respostaCorreta": 2,
+    "categoria": "Negócios",
+    "especificidade": "Baixa",
+    "modo": "Orientador",
+    "justificativa": "Na seção 1.1, aponta-se que a telemedicina acelerada não foi acompanhada da maturidade regulatória para garantir integridade, havendo fraudes e desperdícios. Uma verificação contínua reduz a 'assimetria de informação que hoje o expõe a riscos' e assegura relações confiáveis."
+  },
+  {
+    "id": 32,
+    "pergunta": "No tocante ao armazenamento de dados, por qual razão fundamental o PostgreSQL foi selecionado como sistema gerenciador no projeto Medora?",
+    "alternativas": [
+      "Por sua integração nativa com o React Native para sincronização offline no dispositivo móvel do paciente.",
+      "Por se tratar de um banco de dados não-relacional flexível, ideal para documentos não-estruturados, como os textos em SOAP.",
+      "Devido à robustez transacional, ao controle de concorrência e aos mecanismos nativos de integridade e auditoria inerentes para dados clínicos sensíveis.",
+      "Por ser o único SGBD oficialmente certificado pelo manual NGS2 da Sociedade Brasileira de Informática em Saúde."
+    ],
+    "respostaCorreta": 2,
+    "categoria": "Arquitetura",
+    "especificidade": "Média",
+    "modo": "Prova",
+    "justificativa": "A seção 2.1.3 menciona a escolha do PostgreSQL 'devido à sua robustez transacional, ao controle de concorrência e aos mecanismos nativos de integridade e auditoria — características que atendem diretamente aos requisitos... exigidos no tratamento de dados clínicos'."
   }
 ];
 
